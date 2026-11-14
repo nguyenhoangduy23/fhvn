@@ -4,7 +4,7 @@
   "packageType": "app",
   "appName": "Home VN",
   "description": "Home VN: màn hình chính kiểu Apple TV cho TV Samsung, mở được app thật.",
-  "appPath": "index.html",
+  "appPath": "home.html",
   "serviceFile": "service.js",
   "keys": [
     "ColorF0Red",
