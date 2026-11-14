@@ -61,6 +61,7 @@ var TB_ID = null;
 try { TB_ID = tizen.application.getAppInfo().packageId + '.TizenBrewStandalone'; } catch (e) {}
 var watch = { module: false, appId: null, seenApp: false, since: 0 };
 var relaunches = [];
+var homeUrl = '';
 
 function running(cb) {
   try {
@@ -98,7 +99,16 @@ var server = http.createServer(function (req, res) {
   var u = url.parse(req.url, true);
   if (u.pathname === '/ping') { send(res, 200, 'text/plain', 'ok'); return; }
   if (u.pathname === '/arm') { watch.module = true; watch.appId = null; send(res, 200, 'text/plain', 'ok'); return; }
-  if (u.pathname === '/disarm') { disarm(); send(res, 200, 'text/plain', 'ok'); return; }
+  if (u.pathname === '/disarm') {
+    disarm();
+    var h = String(u.query.home || '');
+    if (/^http:\/\/127\.0\.0\.1:8081\/module\//.test(h)) homeUrl = h;
+    send(res, 200, 'text/plain', 'ok'); return;
+  }
+  if (u.pathname === '/home') {
+    res.writeHead(302, { 'Location': homeUrl || 'http://127.0.0.1:8081/', 'Cache-Control': 'no-store' });
+    res.end(); return;
+  }
   if (u.pathname === '/apps') { listApps(res); return; }
   if (u.pathname === '/launch') {
     var id = String(u.query.id || '');
