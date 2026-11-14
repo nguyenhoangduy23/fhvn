@@ -13,7 +13,7 @@
   .bg.on { opacity: 1; }
   .bg.zoom { animation: drift 40s linear forwards; }
   @keyframes drift { from { transform: scale(1); } to { transform: scale(1.1); } }
-  #shade { position: absolute; inset: 0;
+  #shade { position: absolute; left: 0; top: 0; right: 0; bottom: 0;
     background: linear-gradient(to bottom, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 45%, rgba(0,0,0,.75) 100%); }
   #top { position: absolute; top: 44px; right: 68px; display: flex; align-items: center; gap: 36px;
     font-size: 34px; font-weight: 500; text-shadow: 0 2px 12px rgba(0,0,0,.5);
@@ -26,7 +26,7 @@
   #wxcue { position: absolute; top: 150px; right: 80px; font-size: 19px; color: rgba(255,255,255,.75);
     text-shadow: 0 2px 10px rgba(0,0,0,.6); opacity: 0; transition: opacity .2s; }
   #wxcue.on { opacity: 1; }
-  #forecast { position: absolute; inset: 0; background: rgba(8,10,14,.97); display: none; padding: 90px 96px; }
+  #forecast { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(8,10,14,.97); display: none; padding: 90px 96px; }
   #forecast.on { display: block; }
   #forecast h1 { margin: 0 0 6px; font-size: 44px; font-weight: 600; }
   #forecast .sub { margin: 0 0 48px; font-size: 24px; color: rgba(255,255,255,.6); }
@@ -42,26 +42,28 @@
   #title .k { font-size: 26px; color: rgba(255,255,255,.75); margin-bottom: 8px; }
   #title .t { font-size: 72px; font-weight: 600; letter-spacing: -1px; }
 
-  /* Dock: icons only, no tiles behind them */
-  #dock { position: absolute; left: 0; right: 0; bottom: 70px; height: 230px; padding: 0 96px; overflow: hidden; }
-  #track { position: relative; height: 100%; display: flex; align-items: center; gap: 72px; transition: transform .3s ease; }
-  .app { flex: 0 0 200px; height: 166px; display: flex; align-items: center; justify-content: center;
-    opacity: .72; transform: scale(.92); transition: transform .25s ease, opacity .25s ease; }
-  .app { position: relative; }
-  .app.focus { opacity: 1; transform: scale(1.18) translateY(-12px); }
-  .app.focus::after { content: ""; position: absolute; left: 50%; bottom: -26px; width: 10px; height: 10px; margin-left: -5px;
-    border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+  /* tvOS-style dock: rounded app tiles, focused tile lifts, name below */
+  #title { display: none; }
+  #dock { position: absolute; left: 0; right: 0; bottom: 96px; height: 330px; padding: 0 110px; overflow: hidden; }
+  #track { position: relative; height: 100%; display: flex; align-items: center; transition: transform .3s ease; }
+  .app { position: relative; flex: 0 0 320px; height: 192px; margin-right: 46px; border-radius: 24px;
+    background: rgba(255,255,255,.16); display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 28px rgba(0,0,0,.35); transform: scale(1); transition: transform .22s ease, box-shadow .22s ease; }
+  .app.focus { transform: scale(1.14) translateY(-14px); box-shadow: 0 34px 60px rgba(0,0,0,.6); z-index: 2; }
+  .app.focus::before { content: ""; position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 24px; z-index: 3;
+    background: linear-gradient(160deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 45%); }
+  .app img.orig { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 24px; }
   .app img.logo { filter: drop-shadow(0 4px 14px rgba(0,0,0,.55)); }
-  .app img.orig { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 18px;
-    filter: drop-shadow(0 10px 22px rgba(0,0,0,.5)); }
-  .app svg.glyph { width: 120px; height: 120px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round;
-    stroke-linejoin: round; filter: drop-shadow(0 8px 18px rgba(0,0,0,.55)); }
-  .app .mono { width: 140px; height: 140px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 64px; font-weight: 600; background: rgba(255,255,255,.16); backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
-  .app .mono svg { width: 64px; height: 64px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; }
-  .app.focus .mono { background: rgba(255,255,255,.3); }
-
+  .app svg.glyph { width: 96px; height: 96px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round;
+    stroke-linejoin: round; }
+  .app .mono { width: 110px; height: 110px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 54px; font-weight: 600; background: rgba(255,255,255,.18); }
+  .app .mono svg { width: 54px; height: 54px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; }
+  .app .name { position: absolute; left: -40px; right: -40px; top: 100%; margin-top: 18px; text-align: center;
+    font-size: 26px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-shadow: 0 2px 10px rgba(0,0,0,.7); opacity: 0; transition: opacity .2s; }
+  .app.focus .name { opacity: 1; }
+  .app.mod { background: linear-gradient(135deg, #e62117, #9b0d07); }
   #hint { position: absolute; right: 96px; bottom: 24px; font-size: 18px; color: rgba(255,255,255,.55); }
   #hint b { display: inline-block; width: 14px; height: 14px; border-radius: 3px; background: #e5484d;
     margin: 0 6px -1px 0; }
@@ -130,13 +132,15 @@ var FIXED_CITY = null;
 var FALLBACK_CITY = { name: "TP. Hồ Chí Minh", lat: 10.7769, lon: 106.7009 };
 var PHOTO_SECONDS = 30;
 // "white" = white logos, "color" = logos in their own colours, "original" = icons as the TV has them (with the box)
-var DEFAULT_ICON_STYLE = "white";
+var DEFAULT_ICON_STYLE = "original";
 var DEFAULT_APPS = [/tizentube/i, /youtube/i, /netflix/i, /spotify/i, /geforce/i, /\bzn\b/i];
 // ---------------------------------
 
-var ICON_SERVER = "http://127.0.0.1:47811/icon?path=";
+var BRIDGE = "http://127.0.0.1:47812";
+var ICON_SERVER = BRIDGE + "/icon?path=";
+var bridgeOK = false, modWs = null;
 var hasTizen = typeof window.tizen !== "undefined" && !!tizen.application;
-if (!hasTizen) document.documentElement.className += " laptop";
+
 var allApps = [], pinned = [], items = [];
 var focus = 0, mode = "dock", pfocus = 0, pzone = "grid", ofocus = 0, bgFlip = 0, topFocus = false;
 var iconState = {};
@@ -146,8 +150,59 @@ function toast(msg) { var t = $("toast"); t.textContent = msg; t.classList.add("
   clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove("on"); }, 2500); }
 
 // ---------- apps ----------
+function xget(path, cb) {
+  var x = new XMLHttpRequest(), fin = false;
+  function end(ok, txt) { if (fin) return; fin = true; cb(ok, txt); }
+  x.onreadystatechange = function () { if (x.readyState === 4) end(x.status === 200, x.responseText); };
+  x.onerror = function () { end(false); };
+  x.timeout = 8000; x.ontimeout = function () { end(false); };
+  try { x.open("GET", BRIDGE + path, true); x.send(); } catch (e) { end(false); }
+}
+function bridgeApps(tries, cb) {
+  xget("/apps", function (ok, txt) {
+    var list = null;
+    if (ok) { try { list = JSON.parse(txt); } catch (e) {} }
+    if (list) { bridgeOK = true; cb(list); return; }
+    if (tries > 1) setTimeout(function () { bridgeApps(tries - 1, cb); }, 1000); else cb([]);
+  });
+}
+function tbModules(cb) {
+  var fin = false, asked = 0;
+  function end(list) { if (fin) return; fin = true; cb(list || []); }
+  setTimeout(function () { end([]); }, 6000);
+  try {
+    modWs = new WebSocket("ws://127.0.0.1:8081");
+    modWs.onopen = function () { asked++; modWs.send(JSON.stringify({ type: 4, payload: false })); };
+    modWs.onmessage = function (e) {
+      var d; try { d = JSON.parse(e.data); } catch (x) { return; }
+      if (d.type !== 4) return;
+      if (!d.payload && asked < 2) { asked++; modWs.send(JSON.stringify({ type: 4, payload: true })); return; }
+      end((d.payload || []).filter(function (m) {
+        return m && m.appPath && !/fhvn|framehome/i.test(m.fullName || "") && m.appName !== "Home";
+      }).map(function (m) { return { id: "mod:" + m.fullName, name: m.appName || m.name, mod: m }; }));
+    };
+    modWs.onerror = function () { end([]); };
+  } catch (e) { end([]); }
+}
 function loadApps(cb) {
   if (!hasTizen) {
+    var apps = [], mods = [], left = 2;
+    var done = function () {
+      if (--left) return;
+      var all = apps.concat(mods);
+      if (all.length) { cb(all); return; }
+      document.documentElement.className += " laptop";
+      demoApps(cb);
+    };
+    toast("Đang tải ứng dụng…");
+    bridgeApps(15, function (l) { apps = l; done(); });
+    tbModules(function (l) { mods = l; done(); });
+    return;
+  }
+  appsFromTizen(cb);
+}
+function demoApps(cb) {
+  {
     cb([
       { id: "a.TizenTube", name: "TizenTube" }, { id: "org.tizen.netflix-app", name: "Netflix" },
       { id: "b.GeForceNOW", name: "GeForce NOW" }, { id: "c.ZN", name: "ZN" },
@@ -156,6 +211,8 @@ function loadApps(cb) {
     ]);
     return;
   }
+}
+function appsFromTizen(cb) {
   try {
     tizen.application.getAppsInfo(function (list) {
       var seen = {};
@@ -170,9 +227,9 @@ function loadApps(cb) {
   } catch (e) { cb([]); }
 }
 function appById(id) { for (var i = 0; i < allApps.length; i++) if (allApps[i].id === id) return allApps[i]; return null; }
-function savePinned() { try { localStorage.setItem("home.pinned", JSON.stringify(pinned)); } catch (e) {} }
+function savePinned() { try { localStorage.setItem("hvn.pinned", JSON.stringify(pinned)); } catch (e) {} }
 function loadPinned() {
-  try { var s = JSON.parse(localStorage.getItem("home.pinned") || "null"); if (s && s.length) return s; } catch (e) {}
+  try { var s = JSON.parse(localStorage.getItem("hvn.pinned") || "null"); if (s && s.length) return s; } catch (e) {}
   var ids = [];
   DEFAULT_APPS.forEach(function (re) {
     for (var i = 0; i < allApps.length; i++) {
@@ -190,7 +247,7 @@ function loadPinned() {
 // If an icon can't be cleaned up (photo backgrounds etc.) a simple drawn symbol is shown instead.
 var STYLES = ["white", "color", "original"];
 var STYLE_NAMES = { white: "logo trắng", color: "logo màu gốc", original: "biểu tượng gốc (có khung)" };
-var iconStyle = (function () { try { var v = localStorage.getItem("home.iconStyle"); if (STYLES.indexOf(v) >= 0) return v; } catch (e) {} return DEFAULT_ICON_STYLE; })();
+var iconStyle = (function () { try { var v = localStorage.getItem("hvn.iconStyle"); if (STYLES.indexOf(v) >= 0) return v; } catch (e) {} return DEFAULT_ICON_STYLE; })();
 
 var GLYPHS = {
   film: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>',
@@ -508,13 +565,17 @@ function iconHtml(app) {
   var lim = Math.min(1, 240 / w, 140 / h); w *= lim; h *= lim;
   return '<img class="logo" alt="" style="width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px" src="' + r.src + '">';
 }
+function nameHtml(app) {
+  var e = document.createElement("div"); e.textContent = app.name;
+  return '<div class="name">' + e.innerHTML + '</div>';
+}
 function refreshIcon(app) {
   var els = $("track").children;
-  for (var i = 0; i < els.length; i++) if (els[i].getAttribute("data-id") === app.id) els[i].innerHTML = iconHtml(app);
+  for (var i = 0; i < els.length; i++) if (els[i].getAttribute("data-id") === app.id) els[i].innerHTML = iconHtml(app) + nameHtml(app);
 }
 function setIconStyle(next) {
   iconStyle = next;
-  try { localStorage.setItem("home.iconStyle", iconStyle); } catch (e) {}
+  try { localStorage.setItem("hvn.iconStyle", iconStyle); } catch (e) {}
 }
 
 // ---------- dock ----------
@@ -525,9 +586,9 @@ function buildDock() {
   var dock = $("track"); dock.innerHTML = "";
   items.forEach(function (app) {
     var d = document.createElement("div");
-    d.className = "app";
+    d.className = "app" + (app.mod ? " mod" : "");
     d.setAttribute("data-id", app.id);
-    d.innerHTML = iconHtml(app);
+    d.innerHTML = iconHtml(app) + nameHtml(app);
     dock.appendChild(d);
     if (!app.add) loadIcon(app);
   });
@@ -551,11 +612,22 @@ function setFocus(i) {
 }
 function launch(app) {
   if (app.add) { openPicker(); return; }
-  if (!hasTizen) { toast("Mở " + app.name + " (xem thử)"); return; }
+  if (app.mod) { launchModule(app.mod); return; }
+  if (!hasTizen) {
+    if (!bridgeOK) { toast("Mở " + app.name + " (xem thử)"); return; }
+    toast("Đang mở " + app.name + "…");
+    xget("/launch?id=" + encodeURIComponent(app.id), function (ok) { if (!ok) toast("Không mở được: " + app.name); });
+    return;
+  }
   toast("Đang mở " + app.name + "…");
   try {
     tizen.application.launch(app.id, function () {}, function () { launchControl(app); });
   } catch (e) { launchControl(app); }
+}
+function launchModule(m) {
+  toast("Đang mở " + (m.appName || m.name) + "…");
+  try { if (modWs && modWs.readyState === 1) modWs.send(JSON.stringify({ type: 5, payload: m })); } catch (e) {}
+  if (!m.evaluateScriptOnDocumentStart) setTimeout(function () { location.href = m.appPath; }, 300);
 }
 function launchControl(app) {
   try {
@@ -591,7 +663,7 @@ function togglePick(i) {
 }
 
 // ---------- city for the weather ----------
-function savedCity() { try { return JSON.parse(localStorage.getItem("home.city") || "null"); } catch (e) { return null; } }
+function savedCity() { try { return JSON.parse(localStorage.getItem("hvn.city") || "null"); } catch (e) { return null; } }
 function startCityEdit() {
   mode = "city";
   var box = $("opt1"), inp = $("cityinput");
@@ -607,7 +679,7 @@ function endCityEdit(save) {
   mode = "picker";
   if (!save) { renderPicker(); return; }
   if (!q) {
-    try { localStorage.removeItem("home.city"); localStorage.removeItem("home.loc"); } catch (e) {}
+    try { localStorage.removeItem("hvn.city"); localStorage.removeItem("hvn.loc"); } catch (e) {}
     currentCity = null;
     toast("Thành phố: tự động");
     loadWeather(); renderPicker(); return;
@@ -619,7 +691,7 @@ function endCityEdit(save) {
       var r0 = j.results && j.results[0];
       if (!r0) { toast("Không tìm thấy: " + q); return; }
       var city = { name: r0.name, lat: r0.latitude, lon: r0.longitude };
-      try { localStorage.setItem("home.city", JSON.stringify(city)); } catch (e) {}
+      try { localStorage.setItem("hvn.city", JSON.stringify(city)); } catch (e) {}
       toast("Thành phố: " + city.name + (r0.country ? ", " + r0.country : ""));
       loadWeather(); renderPicker();
     })
@@ -749,10 +821,10 @@ function findLocation(cb) {
   if (chosen) { cb(chosen); return; }
   if (FIXED_CITY) { cb(FIXED_CITY); return; }
   try {
-    var c = JSON.parse(localStorage.getItem("home.loc") || "null");
+    var c = JSON.parse(localStorage.getItem("hvn.loc") || "null");
     if (c && Date.now() - c.t < 24 * 3600 * 1000) { cb(c); return; }
   } catch (e) {}
-  function save(loc) { loc.t = Date.now(); try { localStorage.setItem("home.loc", JSON.stringify(loc)); } catch (e) {} cb(loc); }
+  function save(loc) { loc.t = Date.now(); try { localStorage.setItem("hvn.loc", JSON.stringify(loc)); } catch (e) {} cb(loc); }
   fetch("https://get.geojs.io/v1/ip/geo.json").then(function (r) { return r.json(); }).then(function (j) {
     if (!j.latitude) throw 0; save({ name: j.city, lat: +j.latitude, lon: +j.longitude });
   }).catch(function () {
@@ -880,7 +952,7 @@ loadApps(function (list) {
   allApps = list;
   pinned = loadPinned().filter(function (id) { return appById(id); });
   buildDock();
-  if (hasTizen && !allApps.length) toast("Không tìm thấy ứng dụng");
+  if (!allApps.length) toast("Không tìm thấy ứng dụng");
 });
 </script>
 </body>
