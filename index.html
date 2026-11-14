@@ -185,6 +185,7 @@ function tbModules(cb) {
   } catch (e) { end([]); }
 }
 function loadApps(cb) {
+  xget("/disarm", function () {});
   if (!hasTizen) {
     var apps = [], mods = [], left = 2;
     var done = function () {
@@ -626,6 +627,7 @@ function launch(app) {
 }
 function launchModule(m) {
   toast("Đang mở " + (m.appName || m.name) + "…");
+  xget("/arm", function () {});
   try { if (modWs && modWs.readyState === 1) modWs.send(JSON.stringify({ type: 5, payload: m })); } catch (e) {}
   if (!m.evaluateScriptOnDocumentStart) setTimeout(function () { location.href = m.appPath; }, 300);
 }

@@ -52,13 +52,58 @@ function launchApp(id, res) {
   } catch (e) { fail(e); }
 }
 
+// ---- Back returns to Home VN ----
+// TizenTube and other modules run inside the TizenBrew app; Back on their first screen closes TizenBrew.
+// Native apps (Netflix, FPT Play...) may close on Back without bringing TizenBrew forward.
+// So: after Home VN opens something, watch it; when it closes, bring TizenBrew (Home VN) back.
+// Leaving Home VN itself is never undone: the page disarms the watch every time it loads.
+var TB_ID = null;
+try { TB_ID = tizen.application.getAppInfo().packageId + '.TizenBrewStandalone'; } catch (e) {}
+var watch = { module: false, appId: null, seenApp: false, since: 0 };
+var relaunches = [];
+
+function running(cb) {
+  try {
+    tizen.application.getAppsContext(function (ctx) {
+      var ids = {};
+      for (var i = 0; i < ctx.length; i++) ids[ctx[i].appId] = 1;
+      cb(ids);
+    }, function () { cb(null); });
+  } catch (e) { cb(null); }
+}
+
+function bringBack() {
+  var now = Date.now();
+  relaunches = relaunches.filter(function (t) { return now - t < 60000; });
+  if (relaunches.length >= 3 || !TB_ID) return;   // never loop if something keeps closing it
+  relaunches.push(now);
+  try { tizen.application.launch(TB_ID, function () {}, function () {}); } catch (e) {}
+}
+
+function disarm() { watch.module = false; watch.appId = null; watch.seenApp = false; }
+
+setInterval(function () {
+  if (!watch.module && !watch.appId) return;
+  running(function (ids) {
+    if (!ids) return;
+    if (watch.module && TB_ID && !ids[TB_ID]) { disarm(); bringBack(); return; }
+    if (watch.appId) {
+      if (ids[watch.appId]) { watch.seenApp = true; return; }
+      if (watch.seenApp || Date.now() - watch.since > 15000) { disarm(); bringBack(); }
+    }
+  });
+}, 1000);
+
 var server = http.createServer(function (req, res) {
   var u = url.parse(req.url, true);
   if (u.pathname === '/ping') { send(res, 200, 'text/plain', 'ok'); return; }
+  if (u.pathname === '/arm') { watch.module = true; watch.appId = null; send(res, 200, 'text/plain', 'ok'); return; }
+  if (u.pathname === '/disarm') { disarm(); send(res, 200, 'text/plain', 'ok'); return; }
   if (u.pathname === '/apps') { listApps(res); return; }
   if (u.pathname === '/launch') {
     var id = String(u.query.id || '');
     if (!/^[A-Za-z0-9._-]+$/.test(id)) { send(res, 400, 'text/plain', 'bad id'); return; }
+    watch.module = false; watch.appId = id; watch.seenApp = false; watch.since = Date.now();
     launchApp(id, res);
     return;
   }
