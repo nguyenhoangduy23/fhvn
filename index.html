@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="el">
+<html lang="vi">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=1920, initial-scale=1" />
@@ -97,37 +97,41 @@
     font: 22px/1.5 Menlo, Consolas, monospace; white-space: pre-wrap; overflow: hidden; }
   #diag.on { display: block; }
 </style>
-</head>
+<meta property="og:title" content="Home VN" />
+<meta property="og:description" content="Màn hình chính kiểu Apple TV dành cho TV Samsung với tính năng dự báo thời tiết và quản lý ứng dụng" />
+<meta property="og:url" content="https://wintry-moment-b6bf.here.now/fh.html" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" /></head>
 <body>
   <img class="bg" id="bg0" alt="">
   <img class="bg" id="bg1" alt="">
   <div id="shade"></div>
   <div id="top"><div id="weather"></div><div id="clock"></div></div>
   <div id="date"></div>
-  <div id="wxcue">OK για πρόγνωση 5 ημερών ▾</div>
+  <div id="wxcue">OK: dự báo 5 ngày ▾</div>
   <div id="forecast"></div>
   <div id="title"><div class="k" id="kick"></div><div class="t" id="name"></div></div>
   <div id="dock"><div id="track"></div></div>
-  <div id="hint"><b></b>Κόκκινο κουμπί: εφαρμογές και ρυθμίσεις</div>
-  <div id="testhint">Δοκιμή στον υπολογιστή: σύρε εδώ μια εικόνα εικονιδίου ή κάνε επικόλληση (Ctrl+V)</div>
+  <div id="hint"><b></b>Nút đỏ: ứng dụng và cài đặt</div>
+  <div id="testhint">Thử trên máy tính: kéo ảnh biểu tượng vào đây hoặc dán (Ctrl+V)</div>
   <div id="toast"></div>
   <div id="picker">
-    <h1>Ρυθμίσεις</h1>
+    <h1>Cài đặt</h1>
     <div id="opts">
-      <div class="opt" id="opt0"><span class="ol">Εικονίδια (OK για αλλαγή)</span><b id="stylename"></b></div>
-      <div class="opt" id="opt1"><span class="ol">Πόλη για τον καιρό (OK για αλλαγή)</span><b id="cityname"></b>
-        <input id="cityinput" type="text" autocomplete="off" placeholder="π.χ. Πάτρα · κενό = αυτόματα"></div>
+      <div class="opt" id="opt0"><span class="ol">Biểu tượng (OK để đổi)</span><b id="stylename"></b></div>
+      <div class="opt" id="opt1"><span class="ol">Thành phố xem thời tiết (OK để đổi)</span><b id="cityname"></b>
+        <input id="cityinput" type="text" autocomplete="off" placeholder="VD: Đà Lạt · để trống = tự động"></div>
     </div>
-    <p>Εφαρμογές: OK για να προσθέσεις ή να βγάλεις. Η σειρά στην αρχική είναι η σειρά που τις επιλέγεις. Κόκκινο ή Πίσω για αποθήκευση.</p>
+    <p>Ứng dụng: bấm OK để thêm hoặc bỏ. Thứ tự trên màn hình chính theo thứ tự anh chọn. Nút đỏ hoặc Back để lưu.</p>
     <div id="grid"></div>
   </div>
   <div id="diag"></div>
 <script>
 // ---- settings you can change ----
 // Weather location is found automatically from the internet connection.
-// To force a city, set e.g. FIXED_CITY = { name: "Πάτρα", lat: 38.2466, lon: 21.7346 };
+// To force a city, set e.g. FIXED_CITY = { name: "Đà Lạt", lat: 11.9404, lon: 108.4583 };
 var FIXED_CITY = null;
-var FALLBACK_CITY = { name: "Αθήνα", lat: 37.9838, lon: 23.7275 };
+var FALLBACK_CITY = { name: "TP. Hồ Chí Minh", lat: 10.7769, lon: 106.7009 };
 var PHOTO_SECONDS = 30;
 // "white" = white logos, "color" = logos in their own colours, "original" = icons as the TV has them (with the box)
 var DEFAULT_ICON_STYLE = "white";
@@ -189,7 +193,7 @@ function loadPinned() {
 // is detected and removed, so just the logo floats on the photo (white, or in its own colours).
 // If an icon can't be cleaned up (photo backgrounds etc.) a simple drawn symbol is shown instead.
 var STYLES = ["white", "color", "original"];
-var STYLE_NAMES = { white: "λευκά λογότυπα", color: "λογότυπα με τα χρώματά τους", original: "κανονικά εικονίδια (με το κουτί)" };
+var STYLE_NAMES = { white: "logo trắng", color: "logo màu gốc", original: "biểu tượng gốc (có khung)" };
 var iconStyle = (function () { try { var v = localStorage.getItem("home.iconStyle"); if (STYLES.indexOf(v) >= 0) return v; } catch (e) {} return DEFAULT_ICON_STYLE; })();
 
 var GLYPHS = {
@@ -217,7 +221,7 @@ function fallbackHtml(app) {
   for (var i = 0; i < GLYPH_RULES.length; i++) {
     if (GLYPH_RULES[i][0].test(app.name)) return '<svg class="glyph" viewBox="0 0 24 24">' + GLYPHS[GLYPH_RULES[i][1]] + "</svg>";
   }
-  var ini = app.name.replace(/[^A-Za-zΑ-Ωα-ωΆ-ώ0-9]/g, "").slice(0, 1).toUpperCase() || "?";
+  var ini = app.name.replace(/[^A-Za-z0-9À-ỹ]/g, "").slice(0, 1).toUpperCase() || "?";
   return '<div class="mono">' + ini + "</div>";
 }
 
@@ -485,7 +489,7 @@ function loadIcon(app) {
   function attempt(u) {
     var img = new Image();
     if (urls[u].cors) img.crossOrigin = "anonymous";
-    img.onload = function () { st.status = "ok"; st.img = img; st.url = urls[u].url; st.via = urls[u].cors ? "βοηθός" : "απευθείας"; refreshIcon(app); };
+    img.onload = function () { st.status = "ok"; st.img = img; st.url = urls[u].url; st.via = urls[u].cors ? "trợ giúp" : "trực tiếp"; refreshIcon(app); };
     img.onerror = function () {
       tries++;
       if (u === 0 && tries < 6) { setTimeout(function () { attempt(0); }, 1500); return; } // helper may still be starting
@@ -520,7 +524,7 @@ function setIconStyle(next) {
 // ---------- dock ----------
 function buildDock() {
   items = pinned.map(appById).filter(Boolean);
-  items.push({ id: "__add", name: "Προσθήκη", add: true });
+  items.push({ id: "__add", name: "Thêm", add: true });
   if (focus >= items.length) focus = items.length - 1;
   var dock = $("track"); dock.innerHTML = "";
   items.forEach(function (app) {
@@ -546,13 +550,13 @@ function setFocus(i) {
     $("track").style.transform = "translateX(" + (-scrollX) + "px)";
   }
   var app = items[focus];
-  $("kick").textContent = app.add ? "Ρυθμίσεις" : "Άνοιγμα";
-  $("name").textContent = app.add ? "Επίλεξε εφαρμογές" : app.name;
+  $("kick").textContent = app.add ? "Cài đặt" : "Mở";
+  $("name").textContent = app.add ? "Chọn ứng dụng" : app.name;
 }
 function launch(app) {
   if (app.add) { openPicker(); return; }
-  if (!hasTizen) { toast("Άνοιγμα " + app.name + " (προεπισκόπηση)"); return; }
-  toast("Άνοιγμα " + app.name + "…");
+  if (!hasTizen) { toast("Mở " + app.name + " (xem thử)"); return; }
+  toast("Đang mở " + app.name + "…");
   try {
     tizen.application.launch(app.id, function () {}, function () { launchControl(app); });
   } catch (e) { launchControl(app); }
@@ -560,8 +564,8 @@ function launch(app) {
 function launchControl(app) {
   try {
     var c = new tizen.ApplicationControl("http://tizen.org/appcontrol/operation/default");
-    tizen.application.launchAppControl(c, app.id, function () {}, function () { toast("Δεν άνοιξε: " + app.name); });
-  } catch (e) { toast("Δεν άνοιξε: " + app.name); }
+    tizen.application.launchAppControl(c, app.id, function () {}, function () { toast("Không mở được: " + app.name); });
+  } catch (e) { toast("Không mở được: " + app.name); }
 }
 
 // ---------- picker ----------
@@ -570,7 +574,7 @@ function closePicker() { mode = "dock"; $("picker").classList.remove("on"); save
 function renderPicker() {
   $("stylename").textContent = STYLE_NAMES[iconStyle];
   var chosen = savedCity();
-  $("cityname").textContent = chosen ? chosen.name : "Αυτόματα" + (currentCity && currentCity.name ? " · " + currentCity.name : "");
+  $("cityname").textContent = chosen ? chosen.name : "Tự động" + (currentCity && currentCity.name ? " · " + currentCity.name : "");
   $("opt0").classList.toggle("focus", pzone === "opts" && ofocus === 0);
   $("opt1").classList.toggle("focus", pzone === "opts" && ofocus === 1);
   var g = $("grid"); g.innerHTML = "";
@@ -609,21 +613,21 @@ function endCityEdit(save) {
   if (!q) {
     try { localStorage.removeItem("home.city"); localStorage.removeItem("home.loc"); } catch (e) {}
     currentCity = null;
-    toast("Πόλη: αυτόματα");
+    toast("Thành phố: tự động");
     loadWeather(); renderPicker(); return;
   }
-  toast("Αναζήτηση: " + q + "…");
-  fetch("https://geocoding-api.open-meteo.com/v1/search?count=1&language=el&format=json&name=" + encodeURIComponent(q))
+  toast("Đang tìm: " + q + "…");
+  fetch("https://geocoding-api.open-meteo.com/v1/search?count=1&language=vi&format=json&name=" + encodeURIComponent(q))
     .then(function (r) { return r.json(); })
     .then(function (j) {
       var r0 = j.results && j.results[0];
-      if (!r0) { toast("Δεν βρέθηκε: " + q); return; }
+      if (!r0) { toast("Không tìm thấy: " + q); return; }
       var city = { name: r0.name, lat: r0.latitude, lon: r0.longitude };
       try { localStorage.setItem("home.city", JSON.stringify(city)); } catch (e) {}
-      toast("Πόλη: " + city.name + (r0.country ? ", " + r0.country : ""));
+      toast("Thành phố: " + city.name + (r0.country ? ", " + r0.country : ""));
       loadWeather(); renderPicker();
     })
-    .catch(function () { toast("Δεν υπάρχει σύνδεση για την αναζήτηση"); });
+    .catch(function () { toast("Không có mạng để tìm kiếm"); });
 }
 
 // ---------- check screen (green button) ----------
@@ -632,32 +636,32 @@ function openDiag() {
   var box = $("diag");
   box.classList.add("on");
   function render(helper) {
-    var lines = ["Έλεγχος (πράσινο ή Πίσω για κλείσιμο)", "",
-      "TV API: " + (hasTizen ? "ναι" : "όχι"),
-      "Εφαρμογές που βρέθηκαν: " + allApps.length,
-      "Βοηθός εικονιδίων: " + helper,
-      "Στυλ εικονιδίων: " + STYLE_NAMES[iconStyle],
-      "Καιρός για: " + (currentCity ? currentCity.name + (savedCity() ? " (επιλογή σου)" : " (αυτόματα)") : "-"), ""];
+    var lines = ["Kiểm tra (nút xanh lá hoặc Back để đóng)", "",
+      "TV API: " + (hasTizen ? "có" : "không"),
+      "Số ứng dụng tìm thấy: " + allApps.length,
+      "Trợ giúp biểu tượng: " + helper,
+      "Kiểu biểu tượng: " + STYLE_NAMES[iconStyle],
+      "Thời tiết tại: " + (currentCity ? currentCity.name + (savedCity() ? " (đã chọn)" : " (tự động)") : "-"), ""];
     items.forEach(function (a) {
       if (a.add) return;
       var st = iconState[a.id] || {};
-      var shown = st.status !== "ok" ? "[σύμβολο]  " : iconStyle === "original" ? "[κανονικό] " :
-        (st.proc && st.proc[iconStyle]) ? "[λογότυπο] " : "[σύμβολο]  ";
-      var why = st.status === "loading" ? "φορτώνει" : st.status !== "ok" ? "δεν φόρτωσε" :
-        (iconStyle !== "original" && !(st.proc && st.proc[iconStyle])) ? "φορτώθηκε, αλλά το φόντο δεν αφαιρέθηκε" : "ok (" + st.via + ")";
+      var shown = st.status !== "ok" ? "[ký hiệu]  " : iconStyle === "original" ? "[gốc]      " :
+        (st.proc && st.proc[iconStyle]) ? "[logo]     " : "[ký hiệu]  ";
+      var why = st.status === "loading" ? "đang tải" : st.status !== "ok" ? "không tải được" :
+        (iconStyle !== "original" && !(st.proc && st.proc[iconStyle])) ? "đã tải, nhưng chưa xóa được nền" : "ok (" + st.via + ")";
       lines.push(shown + a.name + "  ·  " + a.id + "  ·  " + why);
-      lines.push("            " + (a.icon || "(χωρίς διαδρομή εικονιδίου)"));
+      lines.push("            " + (a.icon || "(không có đường dẫn biểu tượng)"));
     });
     box.textContent = lines.join("\n");
   }
-  render("έλεγχος…");
+  render("đang kiểm tra…");
   var done = false;
-  setTimeout(function () { if (!done) { done = true; render("δεν απαντά"); } }, 3000);
+  setTimeout(function () { if (!done) { done = true; render("không phản hồi"); } }, 3000);
   try {
     fetch("http://127.0.0.1:47811/ping").then(function (r) { return r.text(); })
-      .then(function (t) { if (!done) { done = true; render(t === "ok" ? "λειτουργεί" : "δεν απαντά"); } })
-      .catch(function () { if (!done) { done = true; render("δεν απαντά"); } });
-  } catch (e) { done = true; render("δεν απαντά"); }
+      .then(function (t) { if (!done) { done = true; render(t === "ok" ? "hoạt động" : "không phản hồi"); } })
+      .catch(function () { if (!done) { done = true; render("không phản hồi"); } });
+  } catch (e) { done = true; render("không phản hồi"); }
 }
 function closeDiag() { mode = "dock"; $("diag").classList.remove("on"); }
 
@@ -725,7 +729,7 @@ function tick() {
   var d = new Date();
   $("clock").textContent = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
   var city = $("date").getAttribute("data-city"), txt;
-  try { txt = d.toLocaleDateString("el-GR", { weekday: "long", day: "numeric", month: "long" }); }
+  try { txt = ["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"][d.getDay()] + ", " + d.getDate() + " tháng " + (d.getMonth() + 1); }
   catch (e) { txt = d.toDateString(); }
   $("date").textContent = txt + (city ? " · " + city : "");
 }
@@ -762,12 +766,12 @@ function findLocation(cb) {
   });
 }
 var WX_TEXT = {
-  0: "Αίθριος", 1: "Λίγα σύννεφα", 2: "Αραιή συννεφιά", 3: "Συννεφιά",
-  45: "Ομίχλη", 48: "Ομίχλη", 51: "Ψιχάλα", 53: "Ψιχάλα", 55: "Ψιχάλα",
-  61: "Βροχή", 63: "Βροχή", 65: "Δυνατή βροχή", 66: "Παγωμένη βροχή", 67: "Παγωμένη βροχή",
-  71: "Χιόνι", 73: "Χιόνι", 75: "Δυνατό χιόνι", 77: "Χιονόνερο",
-  80: "Μπόρες", 81: "Μπόρες", 82: "Δυνατές μπόρες", 85: "Χιονομπόρες", 86: "Χιονομπόρες",
-  95: "Καταιγίδα", 96: "Καταιγίδα με χαλάζι", 99: "Καταιγίδα με χαλάζι"
+  0: "Trời quang", 1: "Ít mây", 2: "Mây rải rác", 3: "Nhiều mây",
+  45: "Sương mù", 48: "Sương mù", 51: "Mưa phùn", 53: "Mưa phùn", 55: "Mưa phùn",
+  61: "Mưa", 63: "Mưa", 65: "Mưa to", 66: "Mưa băng", 67: "Mưa băng",
+  71: "Tuyết", 73: "Tuyết", 75: "Tuyết dày", 77: "Mưa tuyết",
+  80: "Mưa rào", 81: "Mưa rào", 82: "Mưa rào to", 85: "Mưa tuyết", 86: "Mưa tuyết",
+  95: "Dông", 96: "Dông kèm mưa đá", 99: "Dông kèm mưa đá"
 };
 function wxText(code) { return WX_TEXT[code] || ""; }
 var weatherDaily = null;
@@ -800,16 +804,16 @@ function setTopFocus(on) {
 }
 function renderForecast() {
   var box = $("forecast");
-  var title = currentCity && currentCity.name ? currentCity.name : "Καιρός";
+  var title = currentCity && currentCity.name ? currentCity.name : "Thời tiết";
   if (!weatherDaily || !weatherDaily.time) {
-    box.innerHTML = '<h1>' + title + '</h1><p class="sub">Φόρτωση πρόγνωσης…</p>';
+    box.innerHTML = '<h1>' + title + '</h1><p class="sub">Đang tải dự báo…</p>';
     return;
   }
-  var days = ["Κυρ", "Δευ", "Τρί", "Τετ", "Πέμ", "Παρ", "Σάβ"];
-  var html = '<h1>' + title + '</h1><p class="sub">Οι επόμενες μέρες</p><div id="fdays">';
+  var days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+  var html = '<h1>' + title + '</h1><p class="sub">Những ngày tới</p><div id="fdays">';
   for (var i = 0; i < weatherDaily.time.length; i++) {
     var d = new Date(weatherDaily.time[i] + "T12:00:00");
-    var name = i === 0 ? "Σήμερα" : days[d.getDay()] + " " + d.getDate() + "/" + (d.getMonth() + 1);
+    var name = i === 0 ? "Hôm nay" : days[d.getDay()] + " " + d.getDate() + "/" + (d.getMonth() + 1);
     html += '<div class="fday' + (i === 0 ? " today" : "") + '">' +
       '<div class="dname">' + name + '</div>' +
       iconFor(weatherDaily.weather_code[i]) +
@@ -817,7 +821,7 @@ function renderForecast() {
       '<div class="lo">' + Math.round(weatherDaily.temperature_2m_min[i]) + '°</div>' +
       '<div class="desc">' + wxText(weatherDaily.weather_code[i]) + '</div></div>';
   }
-  html += '</div><p class="sub" style="margin-top:40px">Πίσω ή OK για κλείσιμο</p>';
+  html += '</div><p class="sub" style="margin-top:40px">Back hoặc OK để đóng</p>';
   box.innerHTML = html;
 }
 
@@ -847,15 +851,15 @@ function addTestIcon(file) {
   img.onload = function () {
     dropCount++;
     var id = "test-" + dropCount + "-" + Date.now();
-    var name = file.name && !/^image\.(png|jpe?g)$/i.test(file.name) ? file.name.replace(/\.[^.]+$/, "") : "Δοκιμή " + dropCount;
+    var name = file.name && !/^image\.(png|jpe?g)$/i.test(file.name) ? file.name.replace(/\.[^.]+$/, "") : "Thử " + dropCount;
     allApps.push({ id: id, name: name, test: true });
-    iconState[id] = { status: "ok", img: img, url: url, via: "δοκιμή", proc: {} };
+    iconState[id] = { status: "ok", img: img, url: url, via: "thử", proc: {} };
     pinned.unshift(id);
     focus = 0; scrollX = 0;
     buildDock();
-    toast("Προστέθηκε: " + name);
+    toast("Đã thêm: " + name);
   };
-  img.onerror = function () { toast("Δεν διαβάστηκε η εικόνα"); };
+  img.onerror = function () { toast("Không đọc được ảnh"); };
   img.src = url;
 }
 document.addEventListener("dragover", function (e) { e.preventDefault(); });
@@ -880,7 +884,7 @@ loadApps(function (list) {
   allApps = list;
   pinned = loadPinned().filter(function (id) { return appById(id); });
   buildDock();
-  if (hasTizen && !allApps.length) toast("Δεν βρέθηκαν εφαρμογές");
+  if (hasTizen && !allApps.length) toast("Không tìm thấy ứng dụng");
 });
 </script>
 </body>
